@@ -4,7 +4,7 @@ This is a script to generate randomly-spliced short reads from a given set of
 contigs, so they can be assembled back (to test assemblers, or genome binning
 software, or more).
 
-While doing this you can specify a desired __average coverage__ for each entry,
+You can generate reads from a single genome, or simulate a metagenomic mixture using multiple contigs originating from multiple -draft- genomes, you can specify a desired __average coverage__ for each entry,
 and define an expected __error rate__.
 
 # An example
@@ -13,13 +13,12 @@ _Note: I am running all these commands from within the source code directory_
 
 ---
 
-Say, you have multiple FASTA files with contigs from -draft- genomes, and you
+Say, you have multiple FASTA files with contigs from multiple genomes, and you
 wish to create a single FASTA file that contains enough number of short reads
 randomly created from these contigs to meet your expected coverage when they are
 assembled.
 
 For a little demonstration there is a `files` directory in the repository that includes 5 FASTA files:
-
 
     $ ls files/*fa
     files/fasta_01.fa files/fasta_02.fa files/fasta_03.fa files/fasta_04.fa files/fasta_05.fa
