@@ -53,10 +53,10 @@ The config file simply says;
 
 > "Generage enough __100nt__ long short reads from all entries you find in
 __sample/fasta_01.fa__, so when they are assembled and short reads mapped back
-to them, the average coverage would be about __100X__. While doing this, introduce some random
-base errors to meet __0.05__ error rate in average. In fact do the same for every
-other entry in this config file with respect to their required coverage values, and store
-all resulting reads in __short_reads.fa__".
+to resulting contigs, the average coverage would be about __100X__ for each contig.
+While doing this, introduce some random base errors to meet __0.05__ error rate in
+average. In fact do the same for every other entry in this config file with respect
+to their required coverage values, and store all resulting reads in __short_reads.fa__".
 
 Once you have your config file ready, this is how you run it:
 
