@@ -18,17 +18,16 @@ wish to create a single FASTA file that contains enough number of short reads
 randomly created from these contigs to meet your expected coverage when they are
 assembled.
 
-For a little demonstration I put a `files` directory with 5 FASTAS files:
+For a little demonstration there is a `files` directory in the repository that includes 5 FASTA files:
 
 
-    ls files/*fa
+    $ ls files/*fa
     files/fasta_01.fa files/fasta_02.fa files/fasta_03.fa files/fasta_04.fa files/fasta_05.fa
 
-Each FASTA file is sampled from a different bacterial genome, contains 5 contigs
+Each FASTA file is sampled from a different bacterial genome, and contains 5 contigs
 that are about 7,500nts long.
 
-To generate short reads from this I have this config file:
-
+There is also a sample configuration file that describes how to work on these FASTA files:
 
     $ cat sample-config.ini
     [general]
