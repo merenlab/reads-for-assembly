@@ -1,0 +1,8 @@
+# platform dependent python byte code files.
+*.pyc
+
+# temporary vi files.
+*.sw*
+
+#nonsense
+*.DS_Store
