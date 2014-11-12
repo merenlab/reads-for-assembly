@@ -79,7 +79,8 @@ def main(config):
             total_num_reads += av_num_short_reads_needed
 
             for i in range(0, av_num_short_reads_needed):
-                progress.update('Entry %s :: %s nts :: reads %s of %s :: num errors: %s ...'\
+                if (i + 1) % 100 == 0:
+                    progress.update('Entry %s :: %s nts :: reads %s of %s :: num errors: %s ...'\
                                                     % (pp(fasta.pos + 1), pp(len(fasta.seq)), 
                                                        pp(i + 1), pp(av_num_short_reads_needed),
                                                        pp(total_num_errors)))
