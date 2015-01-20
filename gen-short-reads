@@ -88,7 +88,7 @@ def main(config):
                 short_read, num_errors = simulate_errors(config.error_rate, fasta.seq[start_pos:start_pos + x])
                 total_num_errors += num_errors
 
-                output.write_id('%s_%d' % (f['alias'], i))
+                output.write_id('%s_%d|source:%s|start:%d|stop:%d' % (f['alias'], i, fasta.id, start_pos, start_pos + x))
                 output.write_seq(short_read)
 
         progress.end()
