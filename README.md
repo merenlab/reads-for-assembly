@@ -1,17 +1,24 @@
-# Short Reads for Assembly
+# Simulating Short Reads for Assembly, Mapping, and Binning experiments
 
-This is a script to generate randomly-spliced short reads from a given set of
-contigs, so they can be assembled back (to test assemblers, or genome binning
-software, or more).
+Scripts to generate random short reads from a given set of contigs, so they can be assembled back (to test assemblers, or genome binning software, or more).
 
-You can generate reads from a single genome, or simulate a metagenomic mixture using multiple contigs originating from multiple -draft- genomes, you can specify a desired __average coverage__ for each entry,
-and define an expected __error rate__.
+Using the config files and scripts,
 
-# An example
+* You can generate **single reads** in a FASTA-formatted output file.
+* You can generate **paired-end reads** in FASTQ-formatted output files. You can define an **insert size with a standard deviation**.
+* You can generate reads from a single FASTA file with a single contig, single FASTA file with multiple contigs, or you can **simulate a complex metagenomic mixture using multiple FASTA files each of with with multiple contigs**.
+* You can specify a desired __average coverage__ for each entry, and define an expected __error rate__ for the sequencer.
+
+The tool (both with respect to its functionality, and design) can be improved dramatically, but we only pushed it as much as what we needed from it. If you need something that is not here, please feel free to open an issue. 
+
+
+# Generating single short reads in a FASTA file
 
 _Note: I am running all these commands from within the source code directory_
 
 ---
+
+For this, you will use the program `gen-single-reads` with a config file that looks like `gen-single-reads-example.ini`.
 
 Say, you have multiple FASTA files with contigs from multiple genomes, and you
 wish to create a single FASTA file that contains enough number of short reads
@@ -28,7 +35,7 @@ that are about 7,500nts long.
 
 There is also a sample configuration file that describes how to work on these FASTA files:
 
-    $ cat sample-config.ini
+    $ cat gen-single-reads-example.ini
     [general]
     output_file = short_reads.fa
     short_read_length = 100
@@ -60,7 +67,7 @@ to their required coverage values, and store all resulting reads in __short_read
 
 Once you have your config file ready, this is how you run it:
 
-    $ ./gen-short-reads sample-config.ini
+    $ ./gen-single-reads gen-single-reads-example.ini
     fasta_01 .......: 38,000 reads w/ 189,975 errors (average rate of 0.0500) generated for 100X average coverage.
     fasta_02 .......: 76,000 reads w/ 379,624 errors (average rate of 0.0500) generated for 200X average coverage.
     fasta_03 .......: 19,000 reads w/ 94,498 errors (average rate of 0.0497) generated for 50X average coverage.
@@ -106,6 +113,80 @@ Here is the detailed coverage of one of those contigs that is at 50X coverage:
 And another example from a contig that is covered about 200X:
 
 ![average_coverage](https://raw.githubusercontent.com/meren/reads-for-assembly/master/files/200X.png)
+
+# Generating paired-end reads in FASTQ R1/R2 files.
+
+Everything is the same, except this time you will use the program `gen-paired-end-reads` with a config file that looks like `gen-paired-end-reads-example.ini`.
+
+This is an example `gen-paired-end-reads-example.ini`:
+
+``` ini
+[general]
+output_sample_name = test_sample
+insert_size = 30
+insert_size_std = 1
+short_read_length = 100
+error_rate = 0.05
+
+[files/fasta_01.fa]
+coverage = 10
+
+[files/fasta_02.fa]
+coverage = 20
+
+[files/fasta_03.fa]
+coverage = 5
+
+[files/fasta_04.fa]
+coverage = 15
+
+[files/fasta_05.fa]
+coverage = 5
+```
+
+`insert_size` is different than the real insert size, and describes the gap between the end of read 1 and the beginning of read 2.
+
+Here is an example run:
+
+``` bash
+$ ./gen-paired-end-reads gen-paired-end-reads-example.ini
+Read lenth ...............: 100
+Insert size ..............: 30
+Insert size std ..........: 1.0
+fasta_01 .................: 380 paired-end reads w/ 18,845 errors (average rate of 0.2480) generated for 10X average coverage.
+fasta_02 .................: 760 paired-end reads w/ 37,950 errors (average rate of 0.2497) generated for 20X average coverage.
+fasta_03 .................: 190 paired-end reads w/ 9,635 errors (average rate of 0.2536) generated for 5X average coverage.
+fasta_04 .................: 570 paired-end reads w/ 28,288 errors (average rate of 0.2481) generated for 15X average coverage.
+fasta_05 .................: 190 paired-end reads w/ 9,665 errors (average rate of 0.2543) generated for 5X average coverage.
+FASTQ R1 .................: test_sample-R1.fastq
+FASTQ R2 .................: test_sample-R2.fastq
+```
+
+And this is how these files look like (those `A`'s are made up quality scores :/ it can easily be improved if you need more complex Q-score simulations):
+
+``` bash
+$ head -n 8 test_sample-R*
+==> test_sample-R1.fastq <==
+@fasta_01:23:B02CBACXX:8:2315:9436:8855 1:N:0:GATCAG
+AAAGTGAGCGATACAAAGCTAAAGCCATCAACCAAAAAGCCCGCAACCCGCAAACCAGCTCCGCANACATCGGAGCTATCCAAGGACGATGACTNCCTGT
++source:640612206 slice:0-7600; start:5360; stop:5460; insert_size:32
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+@fasta_01:23:B02CBACXX:8:2315:7851:9246 1:N:0:GATCAG
+TGATGAGGCCTTCGTGGCCCAAGAGCGGACCAGCCGTAACTACGACCTGGTCGCCGTCTTTTAGGGCCTCGCTCATGGGCACCACGCGGTTTCCCCTATT
++source:640612206 slice:0-7600; start:2274; stop:2374; insert_size:31
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+==> test_sample-R2.fastq <==
+@fasta_01:23:B02CBACXX:8:2315:9436:8855 2:N:0:GATCAG
+TAAATTCACCAATGACATGGACACTCTTTACGTCGGGCGCCCAAACGCAAATGCGCCAGCCGCGCGTGCGCTGCTGCGTGTCGGGATTCGCGCCGATCTT
++source:640612206 slice:0-7600; start:5492; stop:5592; insert_size:32
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+@fasta_01:23:B02CBACXX:8:2315:7851:9246 2:N:0:GATCAG
+GCGATACGGCAGATCCTCGGACCGTGCAACAGTACCTGCTGCGCATGGATGACTTTGCCCGGGTGCTTTCACAGGACGGTCAGTTTGTGCCGTTGGCAAA
++source:640612206 slice:0-7600; start:2405; stop:2505; insert_size:31
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+```
+
 
 # Need more from this tool?
 
