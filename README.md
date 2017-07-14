@@ -1,4 +1,4 @@
-# Simulating Short Reads for Assembly, Mapping, and Binning experiments
+# Simulating Metgenomic Short Reads for Assembly, Mapping, and Binning experiments
 
 Scripts to generate random short reads from a given set of contigs, so they can be assembled back (to test assemblers, or genome binning software, or more).
 
