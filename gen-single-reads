@@ -93,7 +93,7 @@ def main(config):
                 output.write_seq(short_read)
 
         progress.end()
-        run.info(f['alias'], '%s reads w/ %s errors (average rate of %.4f) generated for %sX average coverage.'\
+        run.info('%s w/ %d contigs' % (f['alias'], fasta.pos), '%s reads with %s errors (avg %.4f) for %sX avg cov.'\
                                     % (pp(total_num_reads),
                                        pp(total_num_errors),
                                        total_num_errors * 1.0 / (total_num_reads * x),

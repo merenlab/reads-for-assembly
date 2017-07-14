@@ -127,7 +127,8 @@ def main(config):
 
         progress.end()
         total_num_errors = total_r1_errors + total_r2_errors
-        run.info(f['alias'], '%s reads in %d pairs w/ %s errors (average rate of %.4f) generated for %sX average coverage.'\
+        run.info('%s w/ %d contigs' % (f['alias'], fasta.pos),
+                 '%s reads in %s pairs with %s errors (avg %.4f) for %sX avg cov.'\
                                     % (pp(total_num_reads),
                                        pp(total_num_reads / 2),
                                        pp(total_num_errors),
