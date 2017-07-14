@@ -53,7 +53,7 @@ class Progress:
 
     def new(self, pid):
         if self.pid:
-            raise TerminalError, "Progress.new() can't be called before ending the previous one (Existing: '%s', Competing: '%s')." % (self.pid, pid)
+            raise TerminalError("Progress.new() can't be called before ending the previous one (Existing: '%s', Competing: '%s')." % (self.pid, pid))
 
         if not self.verbose:
             return

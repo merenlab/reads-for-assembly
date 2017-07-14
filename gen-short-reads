@@ -4,7 +4,7 @@
 import os
 import sys
 import random
-import ConfigParser
+import configparser
 
 import utils.terminal as terminal
 import utils.fastalib as u
@@ -46,14 +46,14 @@ def simulate_errors(error_rate, sequence):
         for i in range(0, len(sequence)):
             if random.randint(0, 1000) < threshold:
                 sequence_with_errors += random.choice(bases)
-                num_errors += 1 
+                num_errors += 1
             else:
                 sequence_with_errors += sequence[i]
     else:
         sequence_with_errors = sequence
 
     return sequence_with_errors, num_errors
- 
+
 
 def main(config):
     run = terminal.Run(width = 15)
@@ -72,16 +72,16 @@ def main(config):
         fasta = u.SequenceSource(f['path'])
         total_num_errors = 0
         total_num_reads = 0
-        while fasta.next():
+        while next(fasta):
             L = len(fasta.seq)
 
-            av_num_short_reads_needed = L / x * c
+            av_num_short_reads_needed = int(L / x * c)
             total_num_reads += av_num_short_reads_needed
 
             for i in range(0, av_num_short_reads_needed):
                 if (i + 1) % 100 == 0:
                     progress.update('Entry %s :: %s nts :: reads %s of %s :: num errors: %s ...'\
-                                                    % (pp(fasta.pos + 1), pp(len(fasta.seq)), 
+                                                    % (pp(fasta.pos + 1), pp(len(fasta.seq)),
                                                        pp(i + 1), pp(av_num_short_reads_needed),
                                                        pp(total_num_errors)))
                 start_pos = random.randint(0, L - x)
@@ -100,18 +100,18 @@ def main(config):
                                        ))
 
     output.close()
-    run.info('Fasta output', config.output_file) 
+    run.info('Fasta output', config.output_file)
 
 
 if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Generate short reads from contigs')
-    parser.add_argument('configuration', metavar = 'CONFIG_FILE', 
+    parser.add_argument('configuration', metavar = 'CONFIG_FILE',
                                         help = 'Configuration file')
 
     args = parser.parse_args()
-    user_config = ConfigParser.ConfigParser()
+    user_config = configparser.ConfigParser()
     user_config.read(args.configuration)
 
     config = Configuration(user_config)
