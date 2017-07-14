@@ -14,66 +14,62 @@ The tool (both with respect to its functionality, and design) can be improved dr
 
 # Generating single short reads in a FASTA file
 
-_Note: I am running all these commands from within the source code directory_
-
----
-
-For this, you will use the program `gen-single-reads` with a config file that looks like `gen-single-reads-example.ini`.
-
-Say, you have multiple FASTA files with contigs from multiple genomes, and you
+Say, you have one or more FASTA files each of which contains one or more contigs, and you
 wish to create a single FASTA file that contains enough number of short reads
 randomly created from these contigs to meet your expected coverage when they are
 assembled.
 
+The program `gen-single-reads` allows you to generate those data.
+
 For a little demonstration there is a `files` directory in the repository that includes 5 FASTA files:
 
-    $ ls files/*fa
-    files/fasta_01.fa files/fasta_02.fa files/fasta_03.fa files/fasta_04.fa files/fasta_05.fa
+``` bash
+$ ls files/*fa
+files/fasta_01.fa files/fasta_02.fa files/fasta_03.fa files/fasta_04.fa files/fasta_05.fa
+```
 
 Each FASTA file is sampled from a different bacterial genome, and contains 5 contigs
 that are about 7,500nts long.
 
-There is also a sample configuration file that describes how to work on these FASTA files:
+Here is an example config file you can use with `gen-single-reads`:
 
-    $ cat gen-single-reads-example.ini
-    [general]
-    output_file = short_reads.fa
-    short_read_length = 100
-    error_rate = 0.05
+``` ini
+[general]
+output_file = short_reads.fa
+short_read_length = 100
+error_rate = 0.05
     
-    [files/fasta_01.fa]
-    coverage = 100
+[files/fasta_01.fa]
+coverage = 100
     
-    [files/fasta_02.fa]
-    coverage = 200
+[files/fasta_02.fa]
+coverage = 200
     
-    [files/fasta_03.fa]
-    coverage = 50
+[files/fasta_03.fa]
+coverage = 50
     
-    [files/fasta_04.fa]
-    coverage = 150
+[files/fasta_04.fa]
+coverage = 150
     
-    [files/fasta_05.fa]
-    coverage = 50
+[files/fasta_05.fa]
+coverage = 50
+```
 
-The config file simply says;
+For each section except the `general` section, the config file simply says;
 
-> "Generage enough __100nt__ long short reads from all entries you find in
-__sample/fasta_01.fa__, so when they are assembled and short reads mapped back
-to resulting contigs, the average coverage would be about __100X__ for each contig.
-While doing this, introduce some random base errors to meet __0.05__ error rate in
-average. In fact do the same for every other entry in this config file with respect
-to their required coverage values, and store all resulting reads in __short_reads.fa__".
+> "Generage enough __100nt__ long short reads from all entries you find in __sample/fasta_01.fa__, so when they are assembled and short reads mapped back to resulting contigs, the average coverage would be about __100X__ for each contig in __sample/fasta_01.fa__. While doing this, introduce some random base errors to meet __0.005__ error rate in average. In fact do the same for every other entry in this config file with respect to their required coverage values, and store all resulting reads in __short_reads.fa__".
 
 Once you have your config file ready, this is how you run it:
 
-    $ ./gen-single-reads gen-single-reads-example.ini
-    fasta_01 .......: 38,000 reads w/ 189,975 errors (average rate of 0.0500) generated for 100X average coverage.
-    fasta_02 .......: 76,000 reads w/ 379,624 errors (average rate of 0.0500) generated for 200X average coverage.
-    fasta_03 .......: 19,000 reads w/ 94,498 errors (average rate of 0.0497) generated for 50X average coverage.
-    fasta_04 .......: 57,000 reads w/ 284,756 errors (average rate of 0.0500) generated for 150X average coverage.
-    fasta_05 .......: 19,000 reads w/ 95,257 errors (average rate of 0.0501) generated for 50X average coverage.
-    Fasta output ...: short_reads.fa
+``` bash
+$ ./gen-single-reads gen-single-reads-example.ini
+fasta_01 w/ 5 contigs : 3,800 reads with 1,870 errors (avg 0.0049) for 10X avg cov.
+fasta_02 w/ 5 contigs : 76,000 reads with 37,831 errors (avg 0.0050) for 200X avg cov.
+fasta_03 w/ 5 contigs : 19,000 reads with 9,536 errors (avg 0.0050) for 50X avg cov.
+fasta_04 w/ 5 contigs : 57,000 reads with 28,489 errors (avg 0.0050) for 150X avg cov.
+fasta_05 w/ 5 contigs : 19,000 reads with 9,485 errors (avg 0.0050) for 50X avg cov.
+Fasta output ...: short_reads.fa
+```
 
 There it is. So in theory, if you assemble short_reads.fa, you should recover
 contigs that are about 50, 100, 150 and 200X coverage. Just for fun, I used
@@ -116,9 +112,7 @@ And another example from a contig that is covered about 200X:
 
 # Generating paired-end reads in FASTQ R1/R2 files.
 
-Everything is the same, except this time you will use the program `gen-paired-end-reads` with a config file that looks like `gen-paired-end-reads-example.ini`.
-
-This is an example `gen-paired-end-reads-example.ini`:
+Everything is the same, except this time you will use the program `gen-paired-end-reads` with a config file that looks like this one:
 
 ``` ini
 [general]
@@ -153,11 +147,11 @@ $ ./gen-paired-end-reads gen-paired-end-reads-example.ini
 Read lenth ...............: 100
 Insert size ..............: 30
 Insert size std ..........: 1.0
-fasta_01 .................: 380 paired-end reads w/ 18,845 errors (average rate of 0.2480) generated for 10X average coverage.
-fasta_02 .................: 760 paired-end reads w/ 37,950 errors (average rate of 0.2497) generated for 20X average coverage.
-fasta_03 .................: 190 paired-end reads w/ 9,635 errors (average rate of 0.2536) generated for 5X average coverage.
-fasta_04 .................: 570 paired-end reads w/ 28,288 errors (average rate of 0.2481) generated for 15X average coverage.
-fasta_05 .................: 190 paired-end reads w/ 9,665 errors (average rate of 0.2543) generated for 5X average coverage.
+fasta_01 w/ 5 contigs ....: 3,800 reads in 1900.0 pairs with 1,986 errors (avg 0.0052) for 10X avg cov.
+fasta_02 w/ 5 contigs ....: 7,600 reads in 3800.0 pairs with 3,816 errors (avg 0.0050) for 20X avg cov.
+fasta_03 w/ 5 contigs ....: 1,900 reads in 950.0 pairs with 924 errors (avg 0.0049) for 5X avg cov.
+fasta_04 w/ 5 contigs ....: 5,700 reads in 2850.0 pairs with 2,844 errors (avg 0.0050) for 15X avg cov.
+fasta_05 w/ 5 contigs ....: 1,900 reads in 950.0 pairs with 979 errors (avg 0.0052) for 5X avg cov.
 FASTQ R1 .................: test_sample-R1.fastq
 FASTQ R2 .................: test_sample-R2.fastq
 ```
