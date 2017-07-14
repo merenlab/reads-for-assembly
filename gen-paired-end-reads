@@ -73,26 +73,30 @@ def main(config):
     x = config.short_read_length
     Q_str = ''.join(['A'] * x)
 
-    for i in range(0, len(config.fasta_files)):
-        f = config.fasta_files_dict[config.fasta_files[i]]
+    for index_fasta in range(0, len(config.fasta_files)):
+        f = config.fasta_files_dict[config.fasta_files[index_fasta]]
 
         c = f['coverage']
 
-        progress.new('Working on file %d of %d (%s) with expected coverage of %d' % (i + 1, len(config.fasta_files), f['alias'], c))
+        progress.new('Working on file %d of %d (%s) with expected coverage of %d' % (index_fasta + 1, len(config.fasta_files), f['alias'], c))
 
         fasta = fastalib.SequenceSource(f['path'])
         total_r1_errors = 0
         total_r2_errors = 0
+        total_num_reads = 0
         while next(fasta):
             L = len(fasta.seq)
 
-            av_num_pairs_needed = int((L / x * c) / 2)
+            av_num_short_reads_needed = int(L / x * c)
+            total_num_reads += av_num_short_reads_needed
 
-            for i in range(0, av_num_pairs_needed):
-                if (i + 1) % 100 == 0:
+            av_num_pairs_needed = int(av_num_short_reads_needed / 2)
+
+            for index_pair in range(0, av_num_pairs_needed):
+                if (index_pair + 1) % 100 == 0:
                     progress.update('Seq %s :: %s nts :: reads %s of %s :: num errors: %s ...'\
                                                     % (pp(fasta.pos + 1), pp(len(fasta.seq)),
-                                                       pp(i + 1), pp(av_num_pairs_needed),
+                                                       pp(index_pair + 1), pp(av_num_pairs_needed),
                                                        pp(total_r1_errors + total_r2_errors)))
 
                 I = int(round(random.gauss(config.insert_size, config.insert_size_std)))
@@ -123,10 +127,11 @@ def main(config):
 
         progress.end()
         total_num_errors = total_r1_errors + total_r2_errors
-        run.info(f['alias'], '%s paired-end reads w/ %s errors (average rate of %.4f) generated for %sX average coverage.'\
-                                    % (pp(av_num_pairs_needed),
+        run.info(f['alias'], '%s reads in %d pairs w/ %s errors (average rate of %.4f) generated for %sX average coverage.'\
+                                    % (pp(total_num_reads),
+                                       pp(total_num_reads / 2),
                                        pp(total_num_errors),
-                                       total_num_errors * 1.0 / (av_num_pairs_needed * x * 2),
+                                       total_num_errors * 1.0 / (total_num_reads * x),
                                        pp(c),
                                        ))
 

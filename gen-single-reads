@@ -6,8 +6,9 @@ import sys
 import random
 import configparser
 
-import utils.terminal as terminal
-import utils.fastalib as u
+import anvio.fastalib as fastalib
+import anvio.terminal as terminal
+
 pp = terminal.pretty_print
 
 bases = ['A', 'T', 'C', 'G', 'N']
@@ -59,17 +60,17 @@ def main(config):
     run = terminal.Run(width = 15)
     progress = terminal.Progress()
 
-    output = u.FastaOutput(config.output_file)
+    output = fastalib.FastaOutput(config.output_file)
 
-    for i in range(0, len(config.fasta_files)):
-        f = config.fasta_files_dict[config.fasta_files[i]]
+    for index_fasta in range(0, len(config.fasta_files)):
+        f = config.fasta_files_dict[config.fasta_files[index_fasta]]
 
         x = config.short_read_length
         c = f['coverage']
 
-        progress.new('Working on file %d of %d (%s) with expected coverage of %d' % (i + 1, len(config.fasta_files), f['alias'], c))
+        progress.new('Working on file %d of %d (%s) with expected coverage of %d' % (index_fasta + 1, len(config.fasta_files), f['alias'], c))
 
-        fasta = u.SequenceSource(f['path'])
+        fasta = fastalib.SequenceSource(f['path'])
         total_num_errors = 0
         total_num_reads = 0
         while next(fasta):
@@ -78,17 +79,17 @@ def main(config):
             av_num_short_reads_needed = int(L / x * c)
             total_num_reads += av_num_short_reads_needed
 
-            for i in range(0, av_num_short_reads_needed):
-                if (i + 1) % 100 == 0:
+            for index_short_read in range(0, av_num_short_reads_needed):
+                if (index_short_read + 1) % 100 == 0:
                     progress.update('Entry %s :: %s nts :: reads %s of %s :: num errors: %s ...'\
                                                     % (pp(fasta.pos + 1), pp(len(fasta.seq)),
-                                                       pp(i + 1), pp(av_num_short_reads_needed),
+                                                       pp(index_short_read + 1), pp(av_num_short_reads_needed),
                                                        pp(total_num_errors)))
                 start_pos = random.randint(0, L - x)
                 short_read, num_errors = simulate_errors(config.error_rate, fasta.seq[start_pos:start_pos + x])
                 total_num_errors += num_errors
 
-                output.write_id('%s_%d|source:%s|start:%d|stop:%d' % (f['alias'], i, fasta.id, start_pos, start_pos + x))
+                output.write_id('%s_%d|source:%s|start:%d|stop:%d' % (f['alias'], index_short_read, fasta.id, start_pos, start_pos + x))
                 output.write_seq(short_read)
 
         progress.end()
