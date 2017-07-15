@@ -11,6 +11,8 @@ Using the config files and scripts,
 
 The tool (both with respect to its functionality, and design) can be improved dramatically, but we only pushed it as much as what we needed from it. If you need something that is not here, please feel free to open an issue. 
 
+**Note**: You will need anvi'o to be installed on your system. Sorry! Find anvi'o installation instructions here: [http://merenlab.org/software/anvio](http://merenlab.org/software/anvio)
+
 
 # Generating single short reads in a FASTA file
 

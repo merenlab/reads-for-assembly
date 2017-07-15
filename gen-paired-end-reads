@@ -10,6 +10,6 @@ if __name__ == '__main__':
     parser.add_argument('configuration', metavar = 'CONFIG_FILE',
                                         help = 'Configuration file')
 
-    
+
     p = PairedEndReads(parser.parse_args())
     p.generate()

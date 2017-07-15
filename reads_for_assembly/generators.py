@@ -1,9 +1,14 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
 import random
 
-import anvio.utils as u
+try:
+    import anvio.utils as u
+except ModuleNotFoundError:
+    print("Sorry :/ This script relies on some anvi'o modules, and therefore you need anvi'o to be installed on your system.")
+    sys.exit(-1)
 import anvio.fastalib as fastalib
 import anvio.terminal as terminal
 
