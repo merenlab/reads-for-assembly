@@ -21,11 +21,15 @@ assembled.
 
 The program `gen-single-reads` allows you to generate those data.
 
-For a little demonstration there is a `files` directory in the repository that includes 5 FASTA files:
+For a little demonstration there is an `examles/files` directory in the repository that includes 5 FASTA files:
 
 ``` bash
-$ ls files/*fa
-files/fasta_01.fa files/fasta_02.fa files/fasta_03.fa files/fasta_04.fa files/fasta_05.fa
+$ ls examples/files/*fa
+examples/files/fasta_01.fa
+examples/files/fasta_02.fa
+examples/files/fasta_03.fa
+examples/files/fasta_04.fa
+examples/files/fasta_05.fa
 ```
 
 Each FASTA file is sampled from a different bacterial genome, and contains 5 contigs
@@ -62,7 +66,7 @@ For each section except the `general` section, the config file simply says;
 Once you have your config file ready, this is how you run it:
 
 ``` bash
-$ ./gen-single-reads gen-single-reads-example.ini
+$ ./gen-single-reads examples/single-reads-example.ini
 fasta_01 w/ 5 contigs : 3,800 reads with 1,870 errors (avg 0.0049) for 10X avg cov.
 fasta_02 w/ 5 contigs : 76,000 reads with 37,831 errors (avg 0.0050) for 200X avg cov.
 fasta_03 w/ 5 contigs : 19,000 reads with 9,536 errors (avg 0.0050) for 50X avg cov.
@@ -97,18 +101,18 @@ directly copy-pasting from my command line):
 I further analyzed the BAM file in an _ad hoc_ manner with in-house scripts.
 Here is the average coverage of each contig in `output.bam` file:
 
-![average_coverage](https://raw.githubusercontent.com/meren/reads-for-assembly/master/files/average_coverage.png)
+![average_coverage](https://raw.githubusercontent.com/meren/reads-for-assembly/master/examples/files/average_coverage.png)
 
 So randomly generated and assembled short reads did creaete expected coverage
 profiles.
 
 Here is the detailed coverage of one of those contigs that is at 50X coverage:
 
-![average_coverage](https://raw.githubusercontent.com/meren/reads-for-assembly/master/files/50X.png)
+![average_coverage](https://raw.githubusercontent.com/meren/reads-for-assembly/master/examples/files/50X.png)
 
 And another example from a contig that is covered about 200X:
 
-![average_coverage](https://raw.githubusercontent.com/meren/reads-for-assembly/master/files/200X.png)
+![average_coverage](https://raw.githubusercontent.com/meren/reads-for-assembly/master/examples/files/200X.png)
 
 # Generating paired-end reads in FASTQ R1/R2 files.
 
@@ -143,7 +147,7 @@ coverage = 5
 Here is an example run:
 
 ``` bash
-$ ./gen-paired-end-reads gen-paired-end-reads-example.ini
+$ ./gen-paired-end-reads examples/paired-end-reads-example.ini
 Read lenth ...............: 100
 Insert size ..............: 30
 Insert size std ..........: 1.0
