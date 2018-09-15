@@ -121,7 +121,10 @@ class PairedEndReads(configs.PairedEndReadsConfiguration):
                                                            pp(total_r1_errors + total_r2_errors)))
 
                     I = int(round(random.gauss(self.insert_size, self.insert_size_std)))
-                    start_pos = random.randint(0, L - ((x * 2) + I))
+                    if L - ((x * 2) + I) > 0:
+                        start_pos = random.randint(0, L - ((x * 2) + I))
+                    else:
+                        start_pos = random.randint(0, L - (x * 2))
 
                     read_1_start = start_pos
                     read_1_stop = read_1_start + x
