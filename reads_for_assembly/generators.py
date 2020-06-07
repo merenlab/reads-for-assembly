@@ -87,12 +87,44 @@ class PairedEndReads(configs.PairedEndReadsConfiguration):
         output_r1 = open(self.output_sample_name + '-R1.fastq', 'w')
         output_r2 = open(self.output_sample_name + '-R2.fastq', 'w')
 
+        min_sequence_length = (self.short_read_length * 2) + (self.insert_size * 3)
+
         self.run.info('Read lenth', self.short_read_length)
         self.run.info('Insert size', self.insert_size)
         self.run.info('Insert size std', self.insert_size_std)
+        self.run.info('Minimum sequence length REQUIRED', min_sequence_length)
 
         x = self.short_read_length
         self.Q_str = ''.join(['A'] * x)
+
+        # FIRST WE SANITY CHECK FASTA FILES
+        bad_fasta_files = []
+        self.progress.new("Sanity checking FASTA files")
+        for index_fasta in range(0, len(self.fasta_files)):
+            self.progress.update('%d of %d' % (index_fasta + 1, len(self.fasta_files)))
+            f = self.fasta_files_dict[self.fasta_files[index_fasta]]
+            fasta = fastalib.SequenceSource(f['path'])
+
+            bad_lengths = []
+            while next(fasta):
+                if len(fasta.seq) < min_sequence_length:
+                    bad_lengths.append(len(fasta.seq))
+
+            if len(bad_lengths):
+                bad_fasta_files.append((f['alias'], len(bad_lengths)), )
+
+        if len(bad_fasta_files):
+            self.progress.reset()
+            self.run.warning("Some of your FASTA files contain sequences that are shorter than the minimum seqeunce length "
+                             "required given the short read length and insert size you have set in your config file. Briefly, each "
+                             "sequence in your reference FASTA files must be longer than %d base pair. But the following "
+                             "FASTA files have reads shorter than this value:" % (int(min_sequence_length)), header="PLEASE READ CAREFULLY")
+            for alias, num_bad_reads in bad_fasta_files:
+                self.run.info_single("%s has %d reads shorter than %d" % (alias, num_bad_reads, int(min_sequence_length)), mc="red")
+
+            print()
+            sys.exit(-1)
+        self.progress.end()
 
         for index_fasta in range(0, len(self.fasta_files)):
             f = self.fasta_files_dict[self.fasta_files[index_fasta]]
@@ -121,7 +153,10 @@ class PairedEndReads(configs.PairedEndReadsConfiguration):
                                                            pp(total_r1_errors + total_r2_errors)))
 
                     I = int(round(random.gauss(self.insert_size, self.insert_size_std)))
-                    start_pos = random.randint(0, L - ((x * 2) + I))
+
+                    range_max = L - ((x * 2) + I)
+
+                    start_pos = random.randint(0, range_max)
 
                     read_1_start = start_pos
                     read_1_stop = read_1_start + x
@@ -153,7 +188,7 @@ class PairedEndReads(configs.PairedEndReadsConfiguration):
                                         % (pp(total_num_reads),
                                            pp(total_num_reads / 2),
                                            pp(total_num_errors),
-                                           total_num_errors * 1.0 / (total_num_reads * x),
+                                           total_num_errors * 1.0 / (total_num_reads * x) if total_num_errors else 0,
                                            pp(c),
                                            ))
 
