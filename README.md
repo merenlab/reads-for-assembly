@@ -9,7 +9,7 @@ Using the config files and scripts,
 * You can generate reads from a single FASTA file with a single contig, single FASTA file with multiple contigs, or you can **simulate a complex metagenomic mixture using multiple FASTA files each of with with multiple contigs**.
 * You can specify a desired __average coverage__ for each entry, and define an expected __error rate__ for the sequencer.
 
-The tool (both with respect to its functionality, and design) can be improved dramatically, but we only pushed it as much as what we needed from it. If you need something that is not here, please feel free to open an issue. 
+The tool (both with respect to its functionality, and design) can be improved dramatically, but we only pushed it as much as what we needed from it. If you need something that is not here, please feel free to open an issue.
 
 **Note**: You will need anvi'o to be installed on your system. Sorry! Find anvi'o installation instructions here: [http://merenlab.org/software/anvio](http://merenlab.org/software/anvio)
 
@@ -44,19 +44,19 @@ Here is an example config file you can use with `gen-single-reads`:
 output_file = short_reads.fa
 short_read_length = 100
 error_rate = 0.05
-    
+
 [files/fasta_01.fa]
 coverage = 100
-    
+
 [files/fasta_02.fa]
 coverage = 200
-    
+
 [files/fasta_03.fa]
 coverage = 50
-    
+
 [files/fasta_04.fa]
 coverage = 150
-    
+
 [files/fasta_05.fa]
 coverage = 50
 ```
