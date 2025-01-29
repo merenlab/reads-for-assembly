@@ -164,8 +164,8 @@ class PairedEndReads(configs.PairedEndReadsConfiguration):
                     read_2_start = read_1_stop + I
                     read_2_stop = read_2_start + x
 
-                    read_1, num_errors_r1 = simulate_errors(self.error_rate, fasta.seq[read_1_start:read_1_stop])
-                    read_2, num_errors_r2 = simulate_errors(self.error_rate, fasta.seq[read_2_start:read_2_stop])
+                    read_1, num_errors_r1 = simulate_errors(self.error_rate, fasta.seq[read_1_start:read_1_stop], bases=['A', 'T', 'C', 'G'])
+                    read_2, num_errors_r2 = simulate_errors(self.error_rate, fasta.seq[read_2_start:read_2_stop], bases=['A', 'T', 'C', 'G'])
 
                     total_r1_errors += num_errors_r1
                     total_r2_errors += num_errors_r2
@@ -173,12 +173,12 @@ class PairedEndReads(configs.PairedEndReadsConfiguration):
                     c1, c2 = random.randint(1, 10000), random.randint(1, 10000)
                     output_r1.write('@%s:23:B02CBACXX:8:2315:%d:%d 1:N:0:GATCAG\n' % (f['alias'], c1, c2))
                     output_r1.write(read_1 + '\n')
-                    output_r1.write('+source:%s; start:%d; stop:%d; insert_size:%d\n' % (fasta.id, read_1_start, read_1_stop, I))
+                    output_r1.write('+source:%s; start:%d; stop:%d; insert_size:%d; num_errors:%d\n' % (fasta.id, read_1_start, read_1_stop, I, num_errors_r1))
                     output_r1.write('%s\n' % self.Q_str)
 
                     output_r2.write('@%s:23:B02CBACXX:8:2315:%d:%d 2:N:0:GATCAG\n' % (f['alias'], c1, c2))
                     output_r2.write(u.rev_comp(read_2) + '\n')
-                    output_r2.write('+source:%s; start:%d; stop:%d; insert_size:%d\n' % (fasta.id, read_2_start, read_2_stop, I))
+                    output_r2.write('+source:%s; start:%d; stop:%d; insert_size:%d; num_errors:%d\n' % (fasta.id, read_2_start, read_2_stop, I, num_errors_r2))
                     output_r2.write('%s\n' % self.Q_str)
 
             self.progress.end()

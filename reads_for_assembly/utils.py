@@ -4,9 +4,7 @@
 
 import random
 
-bases = ['A', 'T', 'C', 'G', 'N']
-
-def simulate_errors(error_rate, sequence):
+def simulate_errors(error_rate, sequence, bases = ['A', 'T', 'C', 'G', 'N']):
     sequence_with_errors = ''
     num_errors = 0
 
